@@ -1,16 +1,16 @@
 QuickSpec = LibStub( "AceAddon-3.0" ):NewAddon( "QuickSpec" )
 
-BINDING_HEADER_QUICKSPECFRAME = "QuickSpec Frame Bindings"
-_G["BINDING_NAME_QSBINDINGINFO"] = "Open QuickSpec"
+BINDING_HEADER_QUICKSPECFRAME = "QuickSpec"
+_G["BINDING_NAME_QSBINDINGINFO"] = "Open/Close QuickSpec"
 
- local AceGUI = LibStub("AceGUI-3.0")
+local AceGUI = LibStub("AceGUI-3.0")
 local QuickSpecFrame = ...
 
 function QuickSpec:OnEnable()
 	QuickSpecFrame = AceGUI:Create("Window")
 	local height = 85
-	QuickSpecFrame:SetCallback("OnClose",function(widget) QuickSpecFrame:Hide() end)--AceGUI:Release(widget) end)
-	--QuickSpecFrame:SetTitle("QuickSpec")
+	QuickSpecFrame:SetCallback("OnClose",function(widget) QuickSpecFrame:Hide() end)
+	QuickSpecFrame:SetTitle("QuickSpec")
 	--f:SetStatusText("Status Bar")
 	QuickSpecFrame:SetLayout("Flow")
 	QuickSpecFrame:SetWidth(155)
@@ -32,7 +32,10 @@ function QuickSpec:OnEnable()
 	QuickSpecFrame:SetHeight(height)
 --	btn[i]:SetWidth(170)
 --	btn[i]:SetText( specName )
-	icn[i]:SetCallback("OnClick", function() print("Switching to spec: " .. specName .. '.') QuickSpecFrame:Hide() SetSpecialization(i)
+	icn[i]:SetCallback("OnClick", function() 
+		if GetSpecialization() == i then print("|cFF008B8BQuickSpec:|r Spec is already set to " .. specName .. '.') QuickSpecFrame:Hide() else
+		print("|cFF008B8BQuickSpec:|r Switching to spec: " .. specName .. '.') QuickSpecFrame:Hide() SetSpecialization(i) end
+					
 					end )
 	-- Add the button to the container
 --	f:AddChild(btn[i])
@@ -46,9 +49,10 @@ for i, v in pairs({"qs", "quickspec"}) do
 end
 
 SlashCmdList.QUICKSPEC = function()
-QuickSpecFrame:Show()
+	if QuickSpecFrame:IsVisible() then QuickSpecFrame:Hide() else QuickSpecFrame:Show() end
 end
 
 function QuickSpec.Execute()
-	QuickSpecFrame:Show()
+	if QuickSpecFrame:IsVisible() then QuickSpecFrame:Hide() else QuickSpecFrame:Show() end
 end
+
