@@ -1,0 +1,6 @@
+<Bindings>
+ <Binding name="QSBINDINGINFO" header="QUICKSPECFRAME">
+   QuickSpec.Execute()
+ </Binding>
+ 
+</Bindings>

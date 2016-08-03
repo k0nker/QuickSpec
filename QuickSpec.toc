@@ -1,0 +1,26 @@
+## Interface: 70000
+
+## Title: QuickSpec
+## Notes: Quickly switch specs with a popup button interface
+## Author: k0nker
+## Version: 7.0.3.1
+## OptionalDeps: Ace3
+## X-Embeds: Ace3
+
+## DefaultState: Enabled
+## LoadOnDemand: 0
+
+## LoadManagers: AddonLoader
+## X-LoadOn-Always:delayed
+
+#@no-lib-strip@
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceConfig-3.0\AceConfig-3.0.xml
+#@end-no-lib-strip@
+
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+
+QuickSpec.lua
