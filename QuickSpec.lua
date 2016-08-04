@@ -4,44 +4,11 @@ BINDING_HEADER_QUICKSPECFRAME = "QuickSpec"
 _G["BINDING_NAME_QSBINDINGINFO"] = "Open/Close QuickSpec"
 
 local AceGUI = LibStub("AceGUI-3.0")
-local QuickSpecFrame = ...
+
+local QuickSpecFrame = AceGUI:Create("Window")
+QuickSpecFrame:Hide()
 
 function QuickSpec:OnEnable()
-	QuickSpecFrame = AceGUI:Create("Window")
-	local height = 85
-	QuickSpecFrame:SetCallback("OnClose",function(widget) QuickSpecFrame:Hide() end)
-	QuickSpecFrame:SetTitle("QuickSpec")
-	--f:SetStatusText("Status Bar")
-	QuickSpecFrame:SetLayout("Flow")
-	QuickSpecFrame:SetWidth(155)
-	QuickSpecFrame:SetHeight(height)
-	QuickSpecFrame:EnableResize(false)
-	numspecs = GetNumSpecializations()
---	local btn = {}
-	local icn = {}
-	for i=1, numspecs do
-	local specID, specName, _, icon = select(1,GetSpecializationInfo(i))
---	btn[i] = AceGUI:Create("Button")
-	icn[i] = AceGUI:Create("Icon")
-	icn[i]:SetImage(icon)
-	icn[i]:SetLabel( specName )
-	icn[i]:SetHeight(45)
-	icn[i]:SetWidth(150)
-	icn[i]:SetImageSize(45,45)
-	height = height + 70
-	QuickSpecFrame:SetHeight(height)
---	btn[i]:SetWidth(170)
---	btn[i]:SetText( specName )
-	icn[i]:SetCallback("OnClick", function() 
-		if GetSpecialization() == i then print("|cFF008B8BQuickSpec:|r Spec is already set to " .. specName .. '.') QuickSpecFrame:Hide() else
-		print("|cFF008B8BQuickSpec:|r Switching to spec: " .. specName .. '.') QuickSpecFrame:Hide() SetSpecialization(i) end
-					
-					end )
-	-- Add the button to the container
---	f:AddChild(btn[i])
-	QuickSpecFrame:AddChild(icn[i])
-	end
-	QuickSpecFrame:Hide()
 end
 
 for i, v in pairs({"qs", "quickspec"}) do
@@ -49,10 +16,75 @@ for i, v in pairs({"qs", "quickspec"}) do
 end
 
 SlashCmdList.QUICKSPEC = function()
-	if QuickSpecFrame:IsVisible() then QuickSpecFrame:Hide() else QuickSpecFrame:Show() end
+	--if not QuickSpecFrame == nil then AceGUI:Release(QuickSpecFrame) else QuickSpec.Execute() end
+	--if QuickSpecFrame:IsVisible() then QuickSpecFrame:Hide() else QuickSpecFrame:Show() end
+	QuickSpec.Execute()
 end
 
 function QuickSpec.Execute()
-	if QuickSpecFrame:IsVisible() then QuickSpecFrame:Hide() else QuickSpecFrame:Show() end
+	--if QuickSpecFrame:IsVisible() then QuickSpecFrame:Hide() else QuickSpecFrame:Show() end
+	--if QuickSpecFrame then AceGUI:Release(QuickSpecFrame) else
+	if QuickSpecFrame:IsVisible() then
+		QuickSpecFrame:Hide()
+	else
+	AceGUI:Release(QuickSpecFrame)
+	QuickSpecFrame = AceGUI:Create("Window")
+	local height = 165
+	QuickSpecFrame:SetCallback("OnClose",function(widget) QuickSpecFrame:Hide() end)
+	QuickSpecFrame:SetTitle("QuickSpec")
+	--f:SetStatusText("Status Bar")
+	QuickSpecFrame:SetLayout("Flow")
+	QuickSpecFrame:SetWidth(160)
+	QuickSpecFrame:SetHeight(height)
+	QuickSpecFrame:EnableResize(false)
+	local currSpecName, _, currIcon = select(2,GetSpecializationInfo(GetSpecialization()))
+	local currentspeclabel = AceGUI:Create("Label")
+	local currentspecicn = AceGUI:Create("Icon")
+	currentspeclabel:SetText("Current Spec:")
+	currentspeclabel:SetWidth(150)
+	currentspeclabel:SetHeight(10)
+	QuickSpecFrame:AddChild(currentspeclabel)
+	currentspecicn:SetLabel("|CFF008080" .. currSpecName .. "|r")
+	currentspecicn:SetImage(currIcon)
+	currentspecicn:SetImageSize(31,31)
+	currentspecicn:SetWidth(150)
+	currentspecicn:SetHeight(55)
+	currentspecicn:SetCallback("OnClick", function() print("|cFF008B8BQuickSpec:|r Spec is already set to " .. currSpecName .. '.') QuickSpecFrame:Hide() end )
+	QuickSpecFrame:AddChild(currentspecicn)
+	local choosespeclabel = AceGUI:Create("Label")
+	choosespeclabel:SetText("Choose Spec:")
+	choosespeclabel:SetWidth(150)
+	choosespeclabel:SetHeight(10)
+	QuickSpecFrame:AddChild(choosespeclabel)
+
+	numspecs = GetNumSpecializations()
+--	local btn = {}
+	local icn = {}
+	local icnOverlay = {}
+	for i=1, numspecs do
+		local specID, specName, _, icon = select(1,GetSpecializationInfo(i))
+		if GetSpecialization() == i then
+			 else
+			icn[i] = AceGUI:Create("Icon")
+			icn[i]:SetImage(icon)
+			icn[i]:SetLabel( specName )
+			icn[i]:SetHeight(45)
+			icn[i]:SetWidth(150)
+			icn[i]:SetImageSize(45,45)
+			height = height + 65
+			QuickSpecFrame:SetHeight(height)
+			icn[i]:SetCallback("OnClick", function() 
+				if GetSpecialization() == i then print("|cFF008B8BQuickSpec:|r Spec is already set to " .. specName .. '.') QuickSpecFrame:Hide() else
+					print("|cFF008B8BQuickSpec:|r Switching to spec: " .. specName .. '.') QuickSpecFrame:Hide() SetSpecialization(i) end
+				end )
+	
+	-- Add the button to the container
+			QuickSpecFrame:AddChild(icn[i])
+		end
+	end
+	QuickSpecFrame:Show()
+
 end
+end
+
 
