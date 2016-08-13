@@ -1,9 +1,9 @@
 ## Interface: 70000
 
 ## Title: QuickSpec
-## Notes: Quickly switch specs with a popup button interface
+## Notes: Quickly switch specs with a popup button interface or slash command
 ## Author: k0nker
-## Version: 7.0.3.1.1
+## Version: 7.0.3.1.3
 ## OptionalDeps: Ace3
 ## X-Embeds: Ace3
 
