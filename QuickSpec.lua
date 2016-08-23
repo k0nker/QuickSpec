@@ -99,7 +99,7 @@ function QuickSpec.Execute( specArg )
 		for i=1, numspecs2 do
 			local _, newSpecName = GetSpecializationInfo(i)
 			newSpecName = string.lower(newSpecName)
-			if newSpecName == specArg then
+			if newSpecName == specArgString then
 				SetSpecialization(i)
 				return
 			end
