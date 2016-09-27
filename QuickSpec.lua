@@ -32,7 +32,7 @@ function QuickSpec.Execute( specArg )
 		else
 		AceGUI:Release(QuickSpecFrame)
 		QuickSpecFrame = AceGUI:Create("Window")
-		local height = 165
+		local height = 127
 		QuickSpecFrame:SetCallback("OnClose",function(widget) QuickSpecFrame:Hide() end)
 		QuickSpecFrame:SetTitle("QuickSpec")
 		--f:SetStatusText("Status Bar")
@@ -74,7 +74,7 @@ function QuickSpec.Execute( specArg )
 				icn[i]:SetHeight(45)
 				icn[i]:SetWidth(150)
 				icn[i]:SetImageSize(45,45)
-				height = height + 65
+				height = height + 71
 				QuickSpecFrame:SetHeight(height)
 				icn[i]:SetCallback("OnClick", function() 
 					if GetSpecialization() == i then print("|cFF008B8BQuickSpec:|r Spec is already set to " .. specName .. '.') QuickSpecFrame:Hide() else
@@ -83,6 +83,23 @@ function QuickSpec.Execute( specArg )
 	
 		-- Add the button to the container
 				QuickSpecFrame:AddChild(icn[i])
+			end
+		end
+
+		local _, _, classid = UnitClass("player")
+		if classid == 3 and GetPetIcon() then
+			for i=1,3 do
+				local n = i +10
+				local id, name, description, icon, role = GetSpecializationInfo(i, false, true)
+				local curid, curname = GetSpecializationInfo(GetSpecialization(false, true), false, true)
+				if id == curid then else
+					icn[n] = AceGUI:Create("Button")
+					icn[n]:SetText(name)
+					icn[n]:SetCallback("OnClick", function() SetSpecialization(i, true) QuickSpecFrame:Hide() end)
+					height = height + 30
+					QuickSpecFrame:SetHeight(height)
+					QuickSpecFrame:AddChild(icn[n])
+				end
 			end
 		end
 		QuickSpecFrame:Show()
