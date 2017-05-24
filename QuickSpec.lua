@@ -7,8 +7,14 @@ local AceGUI = LibStub("AceGUI-3.0")
 
 local QuickSpecFrame = AceGUI:Create("Window")
 QuickSpecFrame:Hide()
+local _, _, classid = UnitClass("player")
 
 function QuickSpec:OnEnable()
+end
+
+-- Function to print messages from this addon
+function QuickSpec.p( arg )
+		print("|CFF008051QuickSpec:|r " .. arg)
 end
 
 --for i, v in pairs({"qs", "quickspec"}) do
@@ -47,12 +53,12 @@ function QuickSpec.Execute( specArg )
 		currentspeclabel:SetWidth(150)
 		currentspeclabel:SetHeight(10)
 		QuickSpecFrame:AddChild(currentspeclabel)
-		currentspecicn:SetLabel("|CFF008080" .. currSpecName .. "|r")
+		currentspecicn:SetLabel("|CFF008051" .. currSpecName .. "|r")
 		currentspecicn:SetImage(currIcon)
 		currentspecicn:SetImageSize(31,31)
 		currentspecicn:SetWidth(150)
 		currentspecicn:SetHeight(55)
-		currentspecicn:SetCallback("OnClick", function() print("|cFF008B8BQuickSpec:|r Spec is already set to " .. currSpecName .. '.') QuickSpecFrame:Hide() end )
+		currentspecicn:SetCallback("OnClick", function() QuickSpec.p("Spec is already set to " .. currSpecName .. '.') QuickSpecFrame:Hide() end )
 		QuickSpecFrame:AddChild(currentspecicn)
 		local choosespeclabel = AceGUI:Create("Label")
 		choosespeclabel:SetText("Choose Spec:")
@@ -77,8 +83,8 @@ function QuickSpec.Execute( specArg )
 				height = height + 71
 				QuickSpecFrame:SetHeight(height)
 				icn[i]:SetCallback("OnClick", function() 
-					if GetSpecialization() == i then print("|cFF008B8BQuickSpec:|r Spec is already set to " .. specName .. '.') QuickSpecFrame:Hide() else
-					print("|cFF008B8BQuickSpec:|r Switching to spec: " .. specName .. '.') QuickSpecFrame:Hide() SetSpecialization(i) end
+					if GetSpecialization() == i then QuickSpec.p("Spec is already set to " .. specName .. '.') QuickSpecFrame:Hide() else
+					QuickSpec.p("Switching to spec: " .. specName .. '.') QuickSpecFrame:Hide() SetSpecialization(i) end
 					end )
 	
 		-- Add the button to the container
@@ -86,7 +92,6 @@ function QuickSpec.Execute( specArg )
 			end
 		end
 
-		local _, _, classid = UnitClass("player")
 		if classid == 3 and GetPetIcon() then
 			for i=1,3 do
 				local n = i +10
@@ -95,7 +100,8 @@ function QuickSpec.Execute( specArg )
 				if id == curid then else
 					icn[n] = AceGUI:Create("Button")
 					icn[n]:SetText(name)
-					icn[n]:SetCallback("OnClick", function() SetSpecialization(i, true) QuickSpecFrame:Hide() end)
+					icn[n]:SetCallback("OnClick", function() SetSpecialization(i, true) QuickSpecFrame:Hide()
+										QuickSpec.p("Switching pet to spec: " .. name .. '.')  end)
 					height = height + 30
 					QuickSpecFrame:SetHeight(height)
 					QuickSpecFrame:AddChild(icn[n])
@@ -109,19 +115,39 @@ function QuickSpec.Execute( specArg )
 		local currSpecNameString = string.lower(currSpecName)
 		specArgString = string.lower(specArg)
 		if currSpecNameString == specArgString then
-			print("|cFF008B8BQuickSpec:|r " .. "Spec is already set to " .. currSpecName)
+			QuickSpec.p("Spec is already set to " .. currSpecName)
 			return
 		end
 		local numspecs2 = GetNumSpecializations()
 		for i=1, numspecs2 do
 			local _, newSpecName = GetSpecializationInfo(i)
-			newSpecName = string.lower(newSpecName)
-			if newSpecName == specArgString then
+			newSpecNameString = string.lower(newSpecName)
+			if newSpecNameString == specArgString then
 				SetSpecialization(i)
+				QuickSpec.p("Switching to spec: " .. newSpecName .. '.') 
 				return
 			end
 		end
-		print("|cFF008B8BQuickSpec:|r " .. specArg .. " is not a valid spec choice")
+		-- Hunters changing their pets spec
+		if classid == 3 and GetPetIcon() then
+			local currPetSpecName = select(2,GetSpecializationInfo(GetSpecialization(false, true), false, true))
+			local currPetSpecNameString = string.lower(currPetSpecName)
+			--specArgString = string.lower(specArg)
+			if currPetSpecNameString == specArgString then
+				QuickSpec.p("Pet spec is already set to " .. currPetSpecName)
+				return
+			end
+			for i=1,3 do
+				local _, newPetSpecName = GetSpecializationInfo(i, false, true)
+				newPetSpecNameString = string.lower(newPetSpecName)
+				if newPetSpecNameString == specArgString then
+					SetSpecialization(i, true)
+					QuickSpec.p("Switching pet to spec: " .. newPetSpecName .. '.') 
+					return
+				end
+			end
+		end
+		QuickSpec.p(specArg .. " is not a valid spec choice")
 	end
 end
 
