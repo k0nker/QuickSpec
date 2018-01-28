@@ -5,12 +5,14 @@ _G["BINDING_NAME_QSBINDINGINFO"] = "Open/Close QuickSpec"
 
 local AceGUI = LibStub("AceGUI-3.0")
 
-local QuickSpecFrame = AceGUI:Create("Window")
+QuickSpecFrame  = AceGUI:Create("Window")
+_G[" QuickSpecFrame"]  = QuickSpecFrame
 QuickSpecFrame:Hide()
 local _, _, classid = UnitClass("player")
 
 function QuickSpec:OnEnable()
 end
+tinsert(UISpecialFrames, "QuickSpecFrame")
 
 -- Function to print messages from this addon
 function QuickSpec.p( arg )
@@ -45,7 +47,8 @@ function QuickSpec.Execute( specArg )
 		QuickSpecFrame:SetLayout("Flow")
 		QuickSpecFrame:SetWidth(160)
 		QuickSpecFrame:SetHeight(height)
-		QuickSpecFrame:EnableResize(false)
+		--QuickSpecFrame:SetPoint("TOPRIGHT", "PlayerTalentFrame", "TOPRIGHT", 175,0)
+		QuickSpecFrame:EnableResize(true)
 		local currSpecName, _, currIcon = select(2,GetSpecializationInfo(GetSpecialization()))
 		local currentspeclabel = AceGUI:Create("Label")
 		local currentspecicn = AceGUI:Create("Icon")
@@ -65,6 +68,7 @@ function QuickSpec.Execute( specArg )
 		choosespeclabel:SetWidth(150)
 		choosespeclabel:SetHeight(10)
 		QuickSpecFrame:AddChild(choosespeclabel)
+		--QuickSpecFrame:SetHeight(PlayerTalentFrame:GetHeight())
 
 		local numspecs = GetNumSpecializations()
 --		local btn = {}
@@ -82,6 +86,7 @@ function QuickSpec.Execute( specArg )
 				icn[i]:SetImageSize(45,45)
 				height = height + 71
 				QuickSpecFrame:SetHeight(height)
+				--QuickSpecFrame:SetHeight(PlayerTalentFrame:GetHeight())
 				icn[i]:SetCallback("OnClick", function() 
 					if GetSpecialization() == i then QuickSpec.p("Spec is already set to " .. specName .. '.') QuickSpecFrame:Hide() else
 					QuickSpec.p("Switching to spec: " .. specName .. '.') QuickSpecFrame:Hide() SetSpecialization(i) end
@@ -104,6 +109,7 @@ function QuickSpec.Execute( specArg )
 										QuickSpec.p("Switching pet to spec: " .. name .. '.')  end)
 					height = height + 30
 					QuickSpecFrame:SetHeight(height)
+					--QuickSpecFrame:SetHeight(PlayerTalentFrame:GetHeight())
 					QuickSpecFrame:AddChild(icn[n])
 				end
 			end
