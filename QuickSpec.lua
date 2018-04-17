@@ -10,7 +10,6 @@ _G[" QuickSpecFrame"]  = QuickSpecFrame
 QuickSpecFrame:Hide()
 local _, _, classid = UnitClass("player")
 
-
 function QuickSpec:OnEnable()
 end
 tinsert(UISpecialFrames, "QuickSpecFrame")
