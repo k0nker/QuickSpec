@@ -97,23 +97,23 @@ function QuickSpec.Execute( specArg )
 			end
 		end
 
-		if classid == 3 and GetPetIcon() then
-			for i=1,3 do
-				local n = i +10
-				local id, name, description, icon, role = GetSpecializationInfo(i, false, true)
-				local curid, curname = GetSpecializationInfo(GetSpecialization(false, true), false, true)
-				if id == curid then else
-					icn[n] = AceGUI:Create("Button")
-					icn[n]:SetText(name)
-					icn[n]:SetCallback("OnClick", function() SetSpecialization(i, true) QuickSpecFrame:Hide()
-										QuickSpec.p("Switching pet to spec: " .. name .. '.')  end)
-					height = height + 30
-					QuickSpecFrame:SetHeight(height)
-					--QuickSpecFrame:SetHeight(PlayerTalentFrame:GetHeight())
-					QuickSpecFrame:AddChild(icn[n])
-				end
-			end
-		end
+--		if classid == 3 and GetPetIcon() then
+--			for i=1,3 do
+--				local n = i +10
+--				local id, name, description, icon, role = GetSpecializationInfo(i, false, true)
+--				local curid, curname = GetSpecializationInfo(GetSpecialization(false, true), false, true)
+--				if id == curid then else
+--					icn[n] = AceGUI:Create("Button")
+--					icn[n]:SetText(name)
+--					icn[n]:SetCallback("OnClick", function() SetSpecialization(i, true) QuickSpecFrame:Hide()
+--										QuickSpec.p("Switching pet to spec: " .. name .. '.')  end)
+--					height = height + 30
+--					QuickSpecFrame:SetHeight(height)
+--					--QuickSpecFrame:SetHeight(PlayerTalentFrame:GetHeight())
+--					QuickSpecFrame:AddChild(icn[n])
+--				end
+--			end
+--		end
 		QuickSpecFrame:Show()
 	end
 	else
@@ -135,24 +135,24 @@ function QuickSpec.Execute( specArg )
 			end
 		end
 		-- Hunters changing their pets spec
-		if classid == 3 and GetPetIcon() then
-			local currPetSpecName = select(2,GetSpecializationInfo(GetSpecialization(false, true), false, true))
-			local currPetSpecNameString = string.lower(currPetSpecName)
-			--specArgString = string.lower(specArg)
-			if currPetSpecNameString == specArgString then
-				QuickSpec.p("Pet spec is already set to " .. currPetSpecName)
-				return
-			end
-			for i=1,3 do
-				local _, newPetSpecName = GetSpecializationInfo(i, false, true)
-				newPetSpecNameString = string.lower(newPetSpecName)
-				if newPetSpecNameString == specArgString then
-					SetSpecialization(i, true)
-					QuickSpec.p("Switching pet to spec: " .. newPetSpecName .. '.') 
-					return
-				end
-			end
-		end
+--		if classid == 3 and GetPetIcon() then
+--			local currPetSpecName = select(2,GetSpecializationInfo(GetSpecialization(false, true), false, true))
+--			local currPetSpecNameString = string.lower(currPetSpecName)
+--			--specArgString = string.lower(specArg)
+--			if currPetSpecNameString == specArgString then
+--				QuickSpec.p("Pet spec is already set to " .. currPetSpecName)
+--				return
+--			end
+--			for i=1,3 do
+--				local _, newPetSpecName = GetSpecializationInfo(i, false, true)
+--				newPetSpecNameString = string.lower(newPetSpecName)
+--				if newPetSpecNameString == specArgString then
+--					SetSpecialization(i, true)
+--					QuickSpec.p("Switching pet to spec: " .. newPetSpecName .. '.') 
+--					return
+--				end
+--			end
+--		end
 		QuickSpec.p(specArg .. " is not a valid spec choice")
 	end
 end
