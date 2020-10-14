@@ -1,9 +1,9 @@
-## Interface: 80300
+## Interface: 90001
 
 ## Title: QuickSpec
 ## Notes: Quickly switch specs with a popup button interface or slash command
 ## Author: k0nker
-## Version: 9.0.1
+## Version: 901.2
 ## OptionalDeps: Ace3
 ## X-Embeds: Ace3
 
