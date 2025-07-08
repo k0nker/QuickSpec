@@ -5,6 +5,12 @@ _G["BINDING_NAME_QSBINDINGINFO"] = "Open/Close QuickSpec"
 
 local AceGUI = LibStub("AceGUI-3.0")
 
+local IsQuestFlaggedCompleted = IsQuestFlaggedCompleted or C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted
+local GetSpecialization = GetSpecialization or C_SpecializationInfo and C_SpecializationInfo.GetSpecialization
+local SetSpecialization = SetSpecialization or C_SpecializationInfo and C_SpecializationInfo.SetSpecialization
+
+-- C_SpecializationInfo.SetSpecialization(specIndex)
+
 QuickSpecFrame  = AceGUI:Create("Window")
 _G[" QuickSpecFrame"]  = QuickSpecFrame
 QuickSpecFrame:Hide()
