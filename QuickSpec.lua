@@ -25,7 +25,7 @@ QuickSpecFrame:Hide()
 QuickSpecFrame.title = QuickSpecFrame:CreateFontString(nil, "OVERLAY")
 QuickSpecFrame.title:SetFontObject("GameFontHighlight")
 QuickSpecFrame.title:SetPoint("TOP", QuickSpecFrame, "TOP", 0, -10)
-QuickSpecFrame.title:SetText("QuickSpec 2.0")
+QuickSpecFrame.title:SetText("QuickSpec")
 
 -- Function to create/recreate the close button
 local function CreateCloseButton()
@@ -39,11 +39,22 @@ local function CreateCloseButton()
     QuickSpecFrame.closeButton:SetSize(16, 16)
     QuickSpecFrame.closeButton:SetPoint("TOPRIGHT", QuickSpecFrame, "TOPRIGHT", -8, -8)
     
-    -- Use the actual Blizzard close button textures
-    QuickSpecFrame.closeButton:SetNormalTexture("Interface/Buttons/UI-StopButton")
-    QuickSpecFrame.closeButton:SetPushedTexture("Interface/Buttons/UI-StopButton")
-    QuickSpecFrame.closeButton:SetHighlightTexture("Interface/Buttons/ButtonHilight-Square", "ADD")
+    -- Create texture for custom close button
+    local closeTexture = QuickSpecFrame.closeButton:CreateTexture(nil, "ARTWORK")
+    closeTexture:SetAllPoints()
+    closeTexture:SetTexture("Interface\\AddOns\\QuickSpec\\Art\\close-button.png")  -- Path to your custom texture
+    closeTexture:SetVertexColor(1, 1, 1, 1)  -- White tint by default
     
+    -- Store reference to the texture for hover effects
+    QuickSpecFrame.closeButton.texture = closeTexture
+    
+    -- Hover effects - change color tint
+    QuickSpecFrame.closeButton:SetScript("OnEnter", function(self)
+        self.texture:SetVertexColor(1, 0, 0, 1)  -- Red tint on hover
+    end)
+    QuickSpecFrame.closeButton:SetScript("OnLeave", function(self)
+        self.texture:SetVertexColor(1, 1, 1, 1)  -- Back to white tint
+    end)
 
     -- Close button functionality
     QuickSpecFrame.closeButton:SetScript("OnClick", function()
@@ -99,27 +110,20 @@ function QuickSpec.Execute(specArg)
 			-- Get current spec info
 			local currSpecName, _, currIcon = select(2, GetSpecializationInfo(GetSpecialization()))
 
-			-- Current Spec Label - centered
-			local currentSpecLabel = QuickSpecFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-			currentSpecLabel:SetPoint("TOP", QuickSpecFrame, "TOP", 0, yOffset)
-			currentSpecLabel:SetText("Current Spec:")
-			yOffset = yOffset - 25
-			height = height + 25
-
-			-- Current Spec Button - centered
+			-- Current Spec Button - centered (no label needed)
 			local currentSpecButton = CreateFrame("Button", nil, QuickSpecFrame)
 			currentSpecButton:SetPoint("TOP", QuickSpecFrame, "TOP", 0, yOffset)
 			currentSpecButton:SetSize(120, 40)
 
-			-- Current spec icon
+			-- Current spec icon - centered in button
 			local currentSpecIcon = currentSpecButton:CreateTexture(nil, "ARTWORK")
-			currentSpecIcon:SetPoint("LEFT", currentSpecButton, "LEFT", 0, 0)
+			currentSpecIcon:SetPoint("TOP", currentSpecButton, "TOP", 0, -2)
 			currentSpecIcon:SetSize(32, 32)
 			currentSpecIcon:SetTexture(currIcon)
 
-			-- Current spec text
+			-- Current spec text - below the icon
 			local currentSpecText = currentSpecButton:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-			currentSpecText:SetPoint("LEFT", currentSpecIcon, "RIGHT", 5, 0)
+			currentSpecText:SetPoint("TOP", currentSpecButton, "BOTTOM", 0, 0)
 			currentSpecText:SetText("|cFF008051" .. currSpecName .. "|r")
 
 			-- Current spec button functionality
@@ -137,14 +141,14 @@ function QuickSpec.Execute(specArg)
 			end)
 
 			yOffset = yOffset - 55
-			height = height + 55
+			height = height + 40
 
 			-- Choose Spec Label - centered
 			local chooseSpecLabel = QuickSpecFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 			chooseSpecLabel:SetPoint("TOP", QuickSpecFrame, "TOP", 0, yOffset)
 			chooseSpecLabel:SetText("Choose Spec:")
-			yOffset = yOffset - 25
-			height = height + 25
+			yOffset = yOffset - 20
+			height = height + 20
 
 			-- Create buttons for other specs - arranged horizontally
 			local numspecs = GetNumSpecializations()
@@ -181,6 +185,15 @@ function QuickSpec.Execute(specArg)
 				local specIcon = specButton:CreateTexture(nil, "ARTWORK")
 				specIcon:SetAllPoints(specButton)
 				specIcon:SetTexture(spec.icon)
+				
+				-- Create hover overlay texture
+				local hoverOverlay = specButton:CreateTexture(nil, "OVERLAY")
+				hoverOverlay:SetAllPoints(specButton)
+				hoverOverlay:SetColorTexture(0, 0.5, 0.32, 0.3)  -- Same green as current spec text with transparency
+				hoverOverlay:Hide()  -- Hidden by default
+				
+				-- Store reference to overlay for hover effects
+				specButton.hoverOverlay = hoverOverlay
 
 				-- Button click functionality
 				specButton:SetScript("OnClick", function()
@@ -196,13 +209,13 @@ function QuickSpec.Execute(specArg)
 
 				-- Hover effects and tooltip
 				specButton:SetScript("OnEnter", function(self)
-					specButton:SetAlpha(0.8)
+					self.hoverOverlay:Show()  -- Show the red overlay
 					GameTooltip:SetOwner(self, "ANCHOR_TOP")
 					GameTooltip:SetText(spec.name)
 					GameTooltip:Show()
 				end)
-				specButton:SetScript("OnLeave", function()
-					specButton:SetAlpha(1.0)
+				specButton:SetScript("OnLeave", function(self)
+					self.hoverOverlay:Hide()  -- Hide the red overlay
 					GameTooltip:Hide()
 				end)
 
@@ -210,10 +223,10 @@ function QuickSpec.Execute(specArg)
 			end
 			
 			-- Add height for the horizontal button row
-			height = height + buttonHeight + 10
+			height = height + buttonHeight + 5
 
 			-- Set final frame height
-			QuickSpecFrame:SetHeight(height + 20) -- Add some padding at bottom
+			QuickSpecFrame:SetHeight(height + 10) -- Reduced bottom padding
 			
 			-- Create the close button
 			CreateCloseButton()
