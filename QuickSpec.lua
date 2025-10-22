@@ -277,11 +277,82 @@ end
 
 -- Slash Commands
 
+-- Function to parse macro conditionals like [mod:ctrl]
+local function ParseMacroConditionals(text)
+	-- Check if text contains conditionals
+	if not text:match("%[.-%]") then
+		return text -- No conditionals, return as-is
+	end
+	
+	-- Split by spaces to handle multiple conditional statements
+	local lines = {}
+	for line in text:gmatch("[^\r\n]+") do
+		table.insert(lines, line)
+	end
+	
+	-- Process each line
+	for _, line in ipairs(lines) do
+		local conditional, spec = line:match("^%[(.-)%]%s*(.+)$")
+		if conditional and spec then
+			-- Check for [nomod] - no modifiers pressed
+			if conditional == "nomod" then
+				if not IsControlKeyDown() and not IsAltKeyDown() and not IsShiftKeyDown() then
+					return spec:trim()
+				end
+			else
+				-- Parse the conditional like mod:ctrl
+				local condType, condValue = conditional:match("(%w+):(%w+)")
+				
+				if condType == "mod" then
+					-- Check modifier keys
+					local isPressed = false
+					condValue = condValue:lower()
+					
+					if condValue == "ctrl" and IsControlKeyDown() then
+						isPressed = true
+					elseif condValue == "alt" and IsAltKeyDown() then
+						isPressed = true
+					elseif condValue == "shift" and IsShiftKeyDown() then
+						isPressed = true
+					end
+					
+					if isPressed then
+						return spec:trim()
+					end
+				end
+			end
+		end
+	end
+	
+	-- No matching conditional found, check for a default (no conditional)
+	for _, line in ipairs(lines) do
+		if not line:match("^%[") then
+			return line:trim()
+		end
+	end
+	
+	return nil
+end
+
+-- Add string trim helper
+if not string.trim then
+	function string.trim(s)
+		return s:match("^%s*(.-)%s*$")
+	end
+end
+
 local function QuickSpec_SlashCommandHandler(spec)
 	if spec == "" then
 		QuickSpec.Execute(nil)
 	else
-		QuickSpec.Execute(spec)
+		-- Parse macro conditionals
+		local parsedSpec = ParseMacroConditionals(spec)
+		if parsedSpec and parsedSpec ~= "" then
+			QuickSpec.Execute(parsedSpec)
+		elseif not spec:match("%[.-%]") then
+			-- No conditionals, just execute normally
+			QuickSpec.Execute(spec)
+		end
 	end
 end
 
