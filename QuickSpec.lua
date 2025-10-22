@@ -107,6 +107,10 @@ function QuickSpec.Execute(specArg)
 			local height = 60   -- Base height for frame borders and title
 			local yOffset = -30 -- Starting position for content
 
+			-- Get player class for atlas icons
+			local _, playerClass = UnitClass("player")
+			playerClass = string.lower(playerClass)
+
 			-- Get current spec info
 			local currSpecName, _, currIcon = select(2, GetSpecializationInfo(GetSpecialization()))
 
@@ -119,7 +123,13 @@ function QuickSpec.Execute(specArg)
 			local currentSpecIcon = currentSpecButton:CreateTexture(nil, "ARTWORK")
 			currentSpecIcon:SetPoint("TOP", currentSpecButton, "TOP", 0, -2)
 			currentSpecIcon:SetSize(32, 32)
-			currentSpecIcon:SetTexture(currIcon)
+			-- Try to use atlas icon, fallback to texture if atlas not available
+			local atlasName = "spec-icon-" .. playerClass .. "-" .. string.lower(currSpecName):gsub("%s+", "")
+			if C_Texture.GetAtlasInfo(atlasName) then
+				currentSpecIcon:SetAtlas(atlasName)
+			else
+				currentSpecIcon:SetTexture(currIcon)
+			end
 
 			-- Current spec text - below the icon
 			local currentSpecText = currentSpecButton:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -184,7 +194,13 @@ function QuickSpec.Execute(specArg)
 				-- Spec icon (larger, no text)
 				local specIcon = specButton:CreateTexture(nil, "ARTWORK")
 				specIcon:SetAllPoints(specButton)
-				specIcon:SetTexture(spec.icon)
+				-- Try to use atlas icon, fallback to texture if atlas not available
+				local atlasName = "spec-icon-" .. playerClass .. "-" .. string.lower(spec.name):gsub("%s+", "")
+				if C_Texture.GetAtlasInfo(atlasName) then
+					specIcon:SetAtlas(atlasName)
+				else
+					specIcon:SetTexture(spec.icon)
+				end
 				
 				-- Create hover overlay texture
 				local hoverOverlay = specButton:CreateTexture(nil, "OVERLAY")
