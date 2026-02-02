@@ -1,4 +1,4 @@
-## Interface: 110205
+## Interface: 110205, 110207, 120000
 
 ## Title: QuickSpec
 ## Notes: Quickly switch specs with a popup button interface or slash command
