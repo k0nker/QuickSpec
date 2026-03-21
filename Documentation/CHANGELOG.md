@@ -1,10 +1,12 @@
 # QuickSpec Changelog
 ---
 
-## 2026.0321.02
+## 2026.0321.03
 
 # Changes
 - Better visuals for the border instead of a hard 1px
+- Fixed gap in border
+- Updated addon logo
 
 ---
 
