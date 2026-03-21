@@ -1,0 +1,27 @@
+I want to redo this layout. The buttons are ugly when we have access to the gorgeous spec art like what active spec shows. I am imagining the active spec on top, the your horizontal line that had the nice look, then slices of the atlases for the other specs, centered on them but not showing the whole thing.
+
+Does this make sense? These dimensions are not indicative of what I mean, just an idea. The dimension of the whole frame obviously needs to allow the border to be used.
+
+When hovering over a spec to choose from, just a tooltip with the spec.name is needed. And it should glow with a slight yellow effect when hovered.
+
++--------------------------------------+
+| +----------------------------------+ |
+| |                                  | |
+| |       (Active Spec Graphic)      | |
+| |                                  | |
+| |                                  | |
+| |                                  | |
+| |                                  | |
+| |                                  | |
+| |        Active spec.name          | |
+| +----------------------------------+ |
+|    (the horizontal line you made)    |
+| +---------+ +---------+ +----------+ |
+| |         | |         | |          | |
+| | (image) | | (image) | | (image)  | |
+| |         | |         | |          | |
+| |         | |         | |          | |
+| |         | |         | |          | |
+| |         | |         | |          | |
+| +---------+ +---------+ +----------+ |
++--------------------------------------+

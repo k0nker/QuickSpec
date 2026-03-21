@@ -1,14 +1,31 @@
-## Interface: 110205, 110207, 120000
+## Interface: 120001
 
 ## Title: QuickSpec
 ## Notes: Quickly switch specs with a popup button interface or slash command
-## Author: k0nker
-## Version: 110205.2
+## Author: kyoraei
+## Version: 2026.0321.01
+
+## SavedVariablesPerCharacter: QuickSpecCharDB
 
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Always:delayed
+
+Libs\LibStub\LibStub.lua
+Libs\AceLocale-3.0\AceLocale-3.0.lua
+
+Locales\Locale-enUS.lua
+Locales\Locale-deDE.lua
+Locales\Locale-frFR.lua
+Locales\Locale-esES.lua
+Locales\Locale-esMX.lua
+Locales\Locale-ptBR.lua
+Locales\Locale-ruRU.lua
+Locales\Locale-koKR.lua
+Locales\Locale-zhCN.lua
+Locales\Locale-zhTW.lua
+Locales\Locale-itIT.lua
 
 QuickSpec.lua
