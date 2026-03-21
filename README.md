@@ -1,49 +1,130 @@
-# QuickSpec
+# QuickSpec — Usage Guide
 
-A World of Warcraft addon for quickly switching between talent specializations.
+QuickSpec is a lightweight specialization switcher for World of Warcraft. It gives you a clean popup frame for switching specs with a click, a full suite of slash commands for keyboard or macro use, and support for macro conditionals so you can bind multiple specs to a single button.
 
-## Features
+---
 
-- **No Dependencies**: Uses native Blizzard UI frames instead of Ace3 libraries
-- **Dynamic UI**: Frame automatically resizes based on the number of available specializations
-- **Slash Commands**: Support for `/quickspec` and `/qs` commands
-- **Key Binding**: Configurable keybind to open/close the interface
-- **Click to Switch**: Simple click interface to change specializations
+## Opening the Frame
 
-## Usage
+Press your keybind or use the slash command with no arguments:
 
-### Interface
-- Use `/quickspec` or `/qs` to open the specialization selector
-- Click on any specialization icon to switch to that spec
-- The frame shows your current spec at the top and available alternatives below
-- Frame automatically closes after selecting a specialization
+```
+/qs
+/quickspec
+```
 
-### Slash Commands
-- `/quickspec` or `/qs` - Opens the GUI interface
-- `/quickspec <specname>` or `/qs <specname>` - Directly switches to the named specialization
+The popup shows your **current spec** as a large artwork card at the top. Your other available specs appear as pillar-style artwork panels below. Click any alternate spec to switch to it immediately. Click your current spec card to close the frame (you are already on that spec).
 
-### Key Binding
-- Set up a key binding in the game's Key Bindings menu under "QuickSpec"
+Hovering over the active spec card shows a tooltip confirming it is currently active. Hovering over an alternate spec shows its name.
 
-## Changes in Version 901.3
+---
 
-- **Removed Ace3 Dependency**: Completely rewritten to use native Blizzard UI frames
-- **Improved Performance**: No external library dependencies means faster loading
-- **Better Integration**: Uses standard Blizzard frame templates for consistent look and feel
-- **Maintained Functionality**: All original features preserved while removing dependencies
+## Slash Commands
 
-## Installation
+Both `/qs` and `/quickspec` are equivalent.
 
-1. Extract the QuickSpec folder to your `World of Warcraft\_retail_\Interface\AddOns\` directory
-2. Restart World of Warcraft or reload your UI (`/reload`)
-3. The addon should appear in your AddOns list
+| Command | Effect |
+|---|---|
+| `/qs` | Toggle the popup frame open/closed |
+| `/qs <spec name>` | Switch directly to the named spec |
+| `/qs classcolor` | Toggle class-colored UI borders on/off |
 
-## Technical Notes
+**Spec names are case-insensitive.** You can type them in any capitalisation.
 
-The addon now uses:
-- `CreateFrame()` with `BasicFrameTemplateWithInset` for the main window
-- Native font strings and textures for UI elements  
-- Standard Blizzard button templates
-- Built-in frame movement and drag functionality
+### Examples
 
-This eliminates the need for any external libraries while maintaining all functionality.
+```
+/qs fire
+/qs Frost
+/qs Beast Mastery
+/qs retribution
+```
+
+If the name does not match any of your specs, QuickSpec will print an error in chat.
+
+---
+
+## Keybind
+
+QuickSpec registers a keybind called **"Open/Close QuickSpec"** under the **QuickSpec** header in the standard Key Bindings interface (`Esc → Key Bindings → QuickSpec`).
+
+Binding a key there is equivalent to running `/qs` with no arguments — it toggles the frame open and closed.
+
+---
+
+## Macros
+
+Because QuickSpec supports WoW macro conditionals inside the slash command, you can pack multiple spec switches into a single macro button using modifier keys.
+
+### Syntax
+
+Each conditional line takes the form:
+
+```
+/qs [conditional] spec name
+```
+
+Supported conditionals:
+
+| Conditional | Triggers when… |
+|---|---|
+| `[mod:ctrl]` | Ctrl is held |
+| `[mod:alt]` | Alt is held |
+| `[mod:shift]` | Shift is held |
+| `[nomod]` | No modifier key is held |
+
+Lines are evaluated **top to bottom**. The first matching conditional wins. A line with no conditional at all acts as the **default fallback** if nothing above matched.
+
+### Example — Two specs on one button
+
+```
+/qs [mod:shift] protection
+/qs retribution
+```
+
+- Press the button normally → switch to Retribution  
+- Hold **Shift** and press → switch to Protection
+
+### Example — Three specs across three modifiers
+
+```
+/qs [mod:ctrl] balance
+/qs [mod:shift] restoration
+/qs feral
+```
+
+- No modifier → Feral  
+- Shift → Restoration  
+- Ctrl → Balance
+
+### Example — Explicit nomod fallback
+
+```
+/qs [mod:alt] shadow
+/qs [nomod] holy
+```
+
+- Alt held → Shadow  
+- No modifier → Holy  
+- (Other modifiers do nothing)
+
+---
+
+## Class Color Borders
+
+By default the frame uses a deep amber gold accent for all chrome (borders, title, spec name, close button, divider).
+
+Running `/qs classcolor` switches the borders and divider to your character's class color. Running it again reverts to gold. The preference is saved **per character**.
+
+---
+
+## Chat Feedback
+
+QuickSpec prints status messages to your chat in gold text with a `QuickSpec:` prefix:
+
+- Confirming a spec switch: `QuickSpec: Switching spec to Frost.`
+- Already on the selected spec: `QuickSpec: Spec is already set to Frost.`
+- Invalid spec name entered: `QuickSpec: Shadow is not a valid spec choice`
+- Class color toggle: `QuickSpec: Class color borders: ON` / `OFF`
+
+A large fade-out message also appears on screen briefly whenever a spec switch is initiated, matching the style of raid warning text.
