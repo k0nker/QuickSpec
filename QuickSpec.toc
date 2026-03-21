@@ -3,7 +3,9 @@
 ## Title: QuickSpec
 ## Notes: Quickly switch specs with a popup button interface or slash command
 ## Author: kyoraei
-## Version: 2026.0321.01
+## Version: 2026.0321.03
+## IconTexture: Interface\AddOns\QuickSpec\Assets\quickspec.png
+
 
 ## SavedVariablesPerCharacter: QuickSpecCharDB
 

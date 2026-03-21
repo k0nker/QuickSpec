@@ -26,52 +26,46 @@ QuickSpecFrame:Hide()
 -- Stoney grey background from the Blizzard spec choice window.
 -- spec-background atlas is only registered after Blizzard_PlayerSpells loads,
 -- so we apply it in OnShow after demanding that addon.
+-- Insets match the SimplePanelTemplate corner anchor offsets so the background
+-- sits flush inside the border art: left corners hang out 5px, right 2px, bottom 3px, top 0px.
 local frameBg = QuickSpecFrame:CreateTexture(nil, "BACKGROUND", nil, -2)
-frameBg:SetAllPoints()
+frameBg:SetPoint("TOPLEFT",     QuickSpecFrame, "TOPLEFT",      1, -6)
+frameBg:SetPoint("BOTTOMRIGHT", QuickSpecFrame, "BOTTOMRIGHT", -3,  3)
 frameBg:SetColorTexture(0.22, 0.20, 0.18, 1)  -- sensible fallback while atlas loads
 
 -- Dark overlay to take the edge off the stone texture ("only slightly darker")
 local frameDarkOverlay = QuickSpecFrame:CreateTexture(nil, "BACKGROUND", nil, -1)
-frameDarkOverlay:SetAllPoints()
+frameDarkOverlay:SetPoint("TOPLEFT",     QuickSpecFrame, "TOPLEFT",      1, -6)
+frameDarkOverlay:SetPoint("BOTTOMRIGHT", QuickSpecFrame, "BOTTOMRIGHT", -3,  3)
 frameDarkOverlay:SetColorTexture(0, 0, 0, 0.22)
 
+-- forward declarations: OnShow closure must capture these as upvalues before they are assigned below
+local borderNineSlice
+local RefreshBorderColors
+local nineSliceApplied = false
 QuickSpecFrame:SetScript("OnShow", function()
     C_AddOns.LoadAddOn("Blizzard_PlayerSpells")
     if C_Texture.GetAtlasInfo("spec-background") then
         frameBg:SetAtlas("spec-background", false)
     end
+    if not nineSliceApplied then
+        nineSliceApplied = true
+        NineSliceUtil.ApplyLayout(borderNineSlice, NineSliceLayouts.SimplePanelTemplate)
+        RefreshBorderColors()
+    end
 end)
 
--- 1px gold pixel border — four edge textures
--- Unified accent: deep amber gold used for all chrome (title, spec name, close btn, borders when class color off)
+-- Unified accent: deep amber gold used for all chrome (title, spec name, close btn, border tint when class color off)
 local DARK_GOLD_R, DARK_GOLD_G, DARK_GOLD_B, DARK_GOLD_A = 0.78, 0.55, 0.10, 1
 
 -- Overridden from QuickSpecCharDB at PLAYER_LOGIN; default true until then
 local USE_CLASS_COLOR = true
 local BORDER_R, BORDER_G, BORDER_B, BORDER_A = DARK_GOLD_R, DARK_GOLD_G, DARK_GOLD_B, DARK_GOLD_A
-local borderTop    = QuickSpecFrame:CreateTexture(nil, "OVERLAY")
-borderTop:SetHeight(1)
-borderTop:SetPoint("TOPLEFT",  QuickSpecFrame, "TOPLEFT",  0,  0)
-borderTop:SetPoint("TOPRIGHT", QuickSpecFrame, "TOPRIGHT", 0,  0)
-borderTop:SetColorTexture(BORDER_R, BORDER_G, BORDER_B, BORDER_A)
 
-local borderBottom = QuickSpecFrame:CreateTexture(nil, "OVERLAY")
-borderBottom:SetHeight(1)
-borderBottom:SetPoint("BOTTOMLEFT",  QuickSpecFrame, "BOTTOMLEFT",  0, 0)
-borderBottom:SetPoint("BOTTOMRIGHT", QuickSpecFrame, "BOTTOMRIGHT", 0, 0)
-borderBottom:SetColorTexture(BORDER_R, BORDER_G, BORDER_B, BORDER_A)
-
-local borderLeft   = QuickSpecFrame:CreateTexture(nil, "OVERLAY")
-borderLeft:SetWidth(1)
-borderLeft:SetPoint("TOPLEFT",    QuickSpecFrame, "TOPLEFT",    0,  0)
-borderLeft:SetPoint("BOTTOMLEFT", QuickSpecFrame, "BOTTOMLEFT", 0,  0)
-borderLeft:SetColorTexture(BORDER_R, BORDER_G, BORDER_B, BORDER_A)
-
-local borderRight  = QuickSpecFrame:CreateTexture(nil, "OVERLAY")
-borderRight:SetWidth(1)
-borderRight:SetPoint("TOPRIGHT",    QuickSpecFrame, "TOPRIGHT",    0,  0)
-borderRight:SetPoint("BOTTOMRIGHT", QuickSpecFrame, "BOTTOMRIGHT", 0,  0)
-borderRight:SetColorTexture(BORDER_R, BORDER_G, BORDER_B, BORDER_A)
+-- Dragonflight ornate NineSlice window border (layout applied once on first OnShow)
+borderNineSlice = CreateFrame("Frame", nil, QuickSpecFrame)
+borderNineSlice:SetAllPoints()
+borderNineSlice:SetFrameLevel(QuickSpecFrame:GetFrameLevel() + 2)
 
 -- Resolves BORDER_R/G/B/A from class color or gold depending on USE_CLASS_COLOR.
 local function ResolveColors()
@@ -89,13 +83,18 @@ end
 -- Forward declaration so RefreshBorderColors can call it before its definition
 local BuildFrameContent
 
--- Repaints the four window border lines and rebuilds frame content if open.
-local function RefreshBorderColors()
+local NINE_SLICE_PIECES = {"TopLeftCorner","TopRightCorner","BottomLeftCorner","BottomRightCorner","TopEdge","BottomEdge","LeftEdge","RightEdge"}
+
+-- Desaturates and tints the GenericMetal NineSlice border; rebuilds frame content if open.
+RefreshBorderColors = function()
 	ResolveColors()
-	borderTop:SetColorTexture(BORDER_R, BORDER_G, BORDER_B, BORDER_A)
-	borderBottom:SetColorTexture(BORDER_R, BORDER_G, BORDER_B, BORDER_A)
-	borderLeft:SetColorTexture(BORDER_R, BORDER_G, BORDER_B, BORDER_A)
-	borderRight:SetColorTexture(BORDER_R, BORDER_G, BORDER_B, BORDER_A)
+	for _, key in ipairs(NINE_SLICE_PIECES) do
+		local piece = borderNineSlice[key]
+		if piece then
+			piece:SetDesaturation(1)
+			piece:SetVertexColor(BORDER_R, BORDER_G, BORDER_B, BORDER_A)
+		end
+	end
 	if QuickSpecFrame:IsVisible() then
 		BuildFrameContent()
 	end
@@ -127,13 +126,19 @@ closeBtn:SetScript("OnLeave", function(self)
 end)
 closeBtn:SetScript("OnClick", function()
     QuickSpecFrame:Hide()
+end)
+
+-- Always reset position on hide (covers close button, Escape key, and programmatic Hide calls)
+QuickSpecFrame:SetScript("OnHide", function()
     QuickSpecFrame:ClearAllPoints()
     QuickSpecFrame:SetPoint("CENTER")
 end)
 
--- Content container — rebuilt each time the frame opens
+-- Content container — rebuilt each time the frame opens.
+-- Offset 2px left to compensate for the SimplePanelTemplate border's asymmetric corner anchors.
 local contentFrame = CreateFrame("Frame", nil, QuickSpecFrame)
-contentFrame:SetAllPoints()
+contentFrame:SetPoint("TOPLEFT",     QuickSpecFrame, "TOPLEFT",      -2, 0)
+contentFrame:SetPoint("BOTTOMRIGHT", QuickSpecFrame, "BOTTOMRIGHT",  -2, 0)
 
 tinsert(UISpecialFrames, "QuickSpecFrame")
 
