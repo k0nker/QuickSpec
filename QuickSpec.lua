@@ -40,7 +40,7 @@ local function CreateCloseButton()
     
     local closeTexture = QuickSpecFrame.closeButton:CreateTexture(nil, "ARTWORK")
     closeTexture:SetAllPoints()
-    closeTexture:SetTexture("Interface\\AddOns\\QuickSpec\\Art\\close-button.png")
+    closeTexture:SetTexture("Interface\\AddOns\\QuickSpec\\Assets\\close-button.png")
     closeTexture:SetVertexColor(1, 1, 1, 1)
     
     QuickSpecFrame.closeButton.texture = closeTexture
