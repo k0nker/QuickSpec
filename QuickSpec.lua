@@ -484,7 +484,47 @@ function QuickSpec.Execute(specArg)
 		QuickSpec.p(format(L["%s is not a valid spec choice"], specArg))
 	end
 end
+-- Open QuickSpec frame from UI elements (minimap/LDB, slash etc.)
+local function OpenQuickSpecFrame()
+	if QuickSpecFrame:IsVisible() then
+		QuickSpecFrame:Hide()
+	else
+		BuildFrameContent()
+		QuickSpecFrame:Show()
+	end
+end
 
+local function InitializeLibDataBroker()
+	local ldb = LibStub and LibStub("LibDataBroker-1.1", true)
+	if not ldb then
+		return
+	end
+
+	local dataobj = ldb:NewDataObject("QuickSpec", {
+		type = "launcher",
+		text = L["QuickSpec"],
+		icon = "Interface\\Addons\\QuickSpec\\Assets\\quickspec.png",
+		OnClick = function(_, button)
+			if button == "RightButton" then
+				-- optional: add right-click behavior later
+			end
+			OpenQuickSpecFrame()
+		end,
+		OnTooltipShow = function(tt)
+			if not tt or not tt.AddLine then return end
+			tt:SetText(L["QuickSpec"])
+			tt:AddLine(L["Click to open QuickSpec"], 1, 1, 1)
+			--tt:AddLine(L["Right-click for options"], 0.7, 0.7, 0.7)
+		end,
+	})
+
+	local ldbicon = LibStub and LibStub("LibDBIcon-1.0", true)
+	if ldbicon then
+		QuickSpecCharDB = QuickSpecCharDB or {}
+		QuickSpecCharDB.minimap = QuickSpecCharDB.minimap or {}
+		ldbicon:Register("QuickSpec", dataobj, QuickSpecCharDB.minimap)
+	end
+end
 -- Slash Commands
 
 -- Parse macro conditionals like [mod:ctrl] or [nomod]
@@ -579,4 +619,5 @@ Frame:SetScript("OnEvent", function(self, event)
 	USE_CLASS_COLOR = QuickSpecCharDB.useClassColor
 	RefreshBorderColors()
 	SlashCmdList["QUICKSPEC"] = QuickSpec_SlashCommandHandler
+	InitializeLibDataBroker()
 end)

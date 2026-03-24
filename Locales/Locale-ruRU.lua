@@ -7,3 +7,6 @@ L["Switching spec to %s"]          = "Смена специализации на
 L["Currently active"]              = "Сейчас активна"
 L["%s is not a valid spec choice"] = "%s — неверный выбор специализации"
 L["Class color borders: "]         = "Рамки цвета класса: "
+L["QuickSpec"]                    = "QuickSpec"
+L["Click to open QuickSpec"]       = "Нажмите, чтобы открыть QuickSpec"
+L["Right-click for options"]       = "Щелкните правой кнопкой мыши для параметров"
